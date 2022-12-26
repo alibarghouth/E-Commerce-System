@@ -16,5 +16,7 @@ namespace E_Commerce_System.Service.CustomerService
         Task<Customer> GetCustomerById(int id);
 
         Task<Customer> LogOut(int id);
+
+        IEnumerable<OrderForCustomer> GetOrderItemByCoustomerId();
     }
 }

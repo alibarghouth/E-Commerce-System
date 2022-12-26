@@ -3,6 +3,7 @@ using E_Commerce_System.Context;
 using E_Commerce_System.DTO.CustomerDto;
 using E_Commerce_System.Hash;
 using E_Commerce_System.Model;
+using EllipticCurve.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -184,6 +185,31 @@ namespace E_Commerce_System.Service.CustomerService
             return token;
         }
 
+        public  IEnumerable<OrderForCustomer> GetOrderItemByCoustomerId()
+        {
+            var customerOrderItem = _context.Customers
+                .Join(_context.Orders
+                , customer => customer.Id
+                , order => order.CustomerId,
+               (customer, order) => new
+               {
+                   CutomerName = customer.LastName + customer.FirstName,
+                   OrderName = order.Name,
+                   OrderId = order.Id
+               })
+                .Join(
+                _context.OrderItems
+                , order => order.OrderId
+                , orderItem => orderItem.OrderId
+                , (order, orderItem) => new OrderForCustomer
+                {
+                    CutomerName = order.CutomerName,
+                    OrderName = order.OrderName,
+                    OrderItemName = orderItem.Name,
+                    OrderItemCount = orderItem.Count
+                });
 
+            return customerOrderItem;
+        }
     }
 }

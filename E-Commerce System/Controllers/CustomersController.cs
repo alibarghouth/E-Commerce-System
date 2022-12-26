@@ -62,5 +62,13 @@ namespace E_Commerce_System.Controllers
 
             return Ok(customer);
         }
+
+        [HttpGet("GetAllOrderItem")]
+        public async Task<IActionResult> GetAllOrderForCustomer()
+        {
+            var orderItem = _service.GetOrderItemByCoustomerId();
+
+            return Ok(orderItem);
+        }
     }
 }
