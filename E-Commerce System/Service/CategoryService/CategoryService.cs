@@ -10,6 +10,7 @@ namespace E_Commerce_System.Service.CategoryService
     public class CategoryService : ICategoryService
     {
         private readonly ApplicationDBContext _context;
+
         private readonly IMapper _map;
 
         public CategoryService(ApplicationDBContext context, IMapper map)

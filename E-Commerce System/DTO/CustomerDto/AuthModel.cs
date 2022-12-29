@@ -16,11 +16,9 @@ namespace E_Commerce_System.DTO.CustomerDto
 
         public string Role { get; set; }
 
-        public DateTime? ExpiresOn { get; set; }
+        public DateTime? TokenExpier { get; set; }
 
-        [JsonIgnore]
-        public string? RefreshToken { get; set; }
+        public DateTime? TokenCreated { get; set;}
 
-        public DateTime RefreshTokenExpiration { get; set; }
     }
 }

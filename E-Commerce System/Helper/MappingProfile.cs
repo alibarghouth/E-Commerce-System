@@ -4,6 +4,7 @@ using E_Commerce_System.DTO.CustomerDto;
 using E_Commerce_System.DTO.OrderDto;
 using E_Commerce_System.DTO.OrderItemDto;
 using E_Commerce_System.DTO.ProductDto;
+using E_Commerce_System.DTO.Response.Queries;
 using E_Commerce_System.Model;
 
 namespace E_Commerce_System.Helper
@@ -23,6 +24,8 @@ namespace E_Commerce_System.Helper
 
             CreateMap<RegisterOrderItem, OrderItem>();
             CreateMap<RegisterOrder, Order>();
+
+            CreateMap<PaginationQueries, PaginationFilter>();
         }
     }
 }

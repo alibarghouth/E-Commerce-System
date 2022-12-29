@@ -1,14 +1,17 @@
 ﻿using AutoMapper;
 using E_Commerce_System.Context;
 using E_Commerce_System.DTO.CustomerDto;
+using E_Commerce_System.DTO.Response.Queries;
 using E_Commerce_System.Hash;
 using E_Commerce_System.Model;
 using EllipticCurve.Utils;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SendGrid.Helpers.Mail;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.AccessControl;
 using System.Security.Claims;
 using System.Security.Cryptography;
@@ -126,7 +129,8 @@ namespace E_Commerce_System.Service.CustomerService
             {
                 IsAuthenticated = true,
                 Email = users.Email,
-                ExpiresOn = users.TokenExpier,
+                TokenExpier = users.TokenExpier,
+                TokenCreated = users.TokenCreate,
                 Role = users.Role,
                 Username = user.LastName + users.FirstName,
                 Token = users.Token,
@@ -134,12 +138,19 @@ namespace E_Commerce_System.Service.CustomerService
 
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomer()
+        public async Task<IEnumerable<Customer>> GetAllCustomer(PaginationFilter filter = null)
         {
-            var customer = await _context.Customers
+            if(filter == null)
+            {
+                return  await _context.Customers
+              .ToListAsync();
+            }
+            return await _context.Customers
+                .Skip((filter.PageNumber-1)*filter.PageSize)
+                .Take(filter.PageSize)
                 .ToListAsync();
 
-            return customer;
+            
         }
 
         public async Task<Customer> GetCustomerById(int id)
@@ -210,6 +221,14 @@ namespace E_Commerce_System.Service.CustomerService
                 });
 
             return customerOrderItem;
+        }
+
+        public async Task<Customer> GetCustomerByUserName(LoginUser user)
+        {
+            var users = await _context.Customers.SingleOrDefaultAsync(x => x.LastName == user.LastName && x.FirstName == user.FirstName);
+
+
+            return users;
         }
     }
 }
