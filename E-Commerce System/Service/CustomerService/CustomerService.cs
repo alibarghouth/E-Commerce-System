@@ -138,14 +138,19 @@ namespace E_Commerce_System.Service.CustomerService
 
         }
 
-        public async Task<IEnumerable<Customer>> GetAllCustomer(PaginationFilter filter = null)
+        public async Task<IEnumerable<Customer>> GetAllCustomer(string userId =null,PaginationFilter filter = null)
         {
+            var query =  _context.Customers.AsQueryable();
             if(filter == null)
             {
-                return  await _context.Customers
+                return  await query
               .ToListAsync();
             }
-            return await _context.Customers
+            if (!string.IsNullOrEmpty(userId))
+            {
+                 query = query.Where(x => x.Id.ToString() == userId);
+            }
+            return await query
                 .Skip((filter.PageNumber-1)*filter.PageSize)
                 .Take(filter.PageSize)
                 .ToListAsync();
@@ -155,7 +160,8 @@ namespace E_Commerce_System.Service.CustomerService
 
         public async Task<Customer> GetCustomerById(int id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await _context.Customers
+                .FindAsync(id);
 
             return customer;
         }

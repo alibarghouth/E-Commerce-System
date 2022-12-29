@@ -12,7 +12,7 @@ namespace E_Commerce_System.Service.CustomerService
 
         Task<AuthModel> LoginUser(LoginUser user);
 
-        Task<IEnumerable<Customer>> GetAllCustomer(PaginationFilter filter =null);
+        Task<IEnumerable<Customer>> GetAllCustomer(string userId=null,PaginationFilter filter =null);
 
         Task<Customer> GetCustomerById(int id);
 

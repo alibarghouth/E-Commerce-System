@@ -24,8 +24,8 @@ namespace E_Commerce_System.Controllers
 
         private readonly IConfiguration _configuration;
 
-
         private readonly IMapper _map;
+        
         public CustomersController(ICustomerService service, IConfiguration configuration, IMapper map)
         {
             _service = service;
@@ -75,10 +75,12 @@ namespace E_Commerce_System.Controllers
         }
 
         [HttpGet("GetAllUser")]
-        public async Task<IActionResult> GetAllUser([FromQuery] PaginationQueries queries)
+        public async Task<IActionResult> GetAllUser([FromQuery] FilterQuery? query,[FromQuery] PaginationQueries queries)
         {
             var paginationFilter = _map.Map<PaginationFilter>(queries);
-            var customer = await _service.GetAllCustomer(paginationFilter);
+
+            var customer = await _service.GetAllCustomer(query.UserId,paginationFilter);
+
             var paginationResponse = new PagedResponse<Customer>(customer);
             return Ok(paginationResponse);
         }
