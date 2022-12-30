@@ -5,6 +5,8 @@
 * End Point (post) request for Register
 * End Point (post) request for Authentication(LogIn)
 * End Point (Get) request for return Order Item For Customer
+* End Point (Get) request for return all Customer 
+- using fillter by id and using pagination 
 * End Point (Put) request for LogOut
 - update token user to null and user dont has any token to login
 
