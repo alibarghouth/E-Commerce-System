@@ -36,6 +36,10 @@ namespace E_Commerce_System.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> RegisterUser([FromForm] RegisterUser user)
         {
+            if (ModelState.IsValid)
+            {
+                return BadRequest("error in inputs");
+            }
             var users = await _service.RegisterUser(user);
 
             return Ok(users);
@@ -77,11 +81,20 @@ namespace E_Commerce_System.Controllers
         [HttpGet("GetAllUser")]
         public async Task<IActionResult> GetAllUser([FromQuery]string? userId,[FromQuery] PaginationQueries queries)
         {
+            if(queries.PageNumber < 1)
+            {
+                return BadRequest("no content in page 0");
+            }
             var paginationFilter = _map.Map<PaginationFilter>(queries);
 
             var customer = await _service.GetAllCustomer(userId,paginationFilter);
 
             var paginationResponse = new PagedResponse<Customer>(customer);
+            paginationResponse.PageSize = queries.PageSize;
+            paginationResponse.PageNumber = queries.PageNumber;
+            paginationResponse.NextPage = $"/api/Order/GetAllOrdersByfilter?PageNumber={paginationResponse.PageNumber + 1}&PageSize={paginationResponse.PageSize}";
+            paginationResponse.PreviousPage = paginationResponse.PageNumber > 1 ? $"/api/Order/GetAllOrdersByfilter?PageNumber={paginationResponse.PageNumber - 1}&PageSize={paginationResponse.PageSize}" : null;
+
 
             return Ok(paginationResponse);
         }

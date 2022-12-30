@@ -5,6 +5,7 @@ using E_Commerce_System.Service.CustomerService;
 using E_Commerce_System.Service.OrderItemService;
 using E_Commerce_System.Service.OrderService;
 using E_Commerce_System.Service.ProductService;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -66,6 +67,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false
         };
     });
+
+
+builder.Services
+    .AddFluentValidation(option => option.RegisterValidatorsFromAssemblyContaining<Program>());
 
 
 

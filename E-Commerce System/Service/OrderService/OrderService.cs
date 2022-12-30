@@ -43,7 +43,6 @@ namespace E_Commerce_System.Service.OrderService
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
             var orders = await _context.Orders
-                .Include(t =>t.Customer)
                 .ToListAsync();
 
             return orders;
@@ -56,6 +55,8 @@ namespace E_Commerce_System.Service.OrderService
             {
                 query = query.Where(x => x.Id.ToString() == orderId);
             }
+
+
 
              return await query
                 .Skip((filter.PageNumber -1)*filter.PageSize)

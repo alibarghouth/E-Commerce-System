@@ -38,9 +38,13 @@ namespace E_Commerce_System.Controllers
             var filter = _map.Map<PaginationFilter>(queries);
             var orders = await _orderService.GetAllOrdersByfilter(orderId,filter);
 
+
+
             var response = new PagedResponse<Order>(orders);
             response.PageSize = queries.PageSize;
             response.PageNumber = queries.PageNumber;
+            response.NextPage = $"/api/Order/GetAllOrdersByfilter?PageNumber={response.PageNumber  +1}&PageSize={response.PageSize}";
+            response.PreviousPage =response.PageNumber > 1? $"/api/Order/GetAllOrdersByfilter?PageNumber={response.PageNumber - 1}&PageSize={response.PageSize}" :null;
 
             return Ok(response);
         }
