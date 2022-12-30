@@ -1,4 +1,8 @@
-﻿using E_Commerce_System.DTO.OrderDto;
+﻿using AutoMapper;
+using E_Commerce_System.DTO.OrderDto;
+using E_Commerce_System.DTO.Response;
+using E_Commerce_System.DTO.Response.Queries;
+using E_Commerce_System.Model;
 using E_Commerce_System.Service.OrderService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +16,12 @@ namespace E_Commerce_System.Controllers
 
         private readonly IOrderService _orderService;
 
-        public OrdersController(IOrderService orderService)
+        private readonly IMapper _map;
+
+        public OrdersController(IOrderService orderService, IMapper map)
         {
             _orderService = orderService;
+            _map = map;
         }
 
         [HttpGet("GetAllOrder")]
@@ -23,6 +30,19 @@ namespace E_Commerce_System.Controllers
             var orders = await _orderService.GetAllOrdersAsync();
 
             return Ok(orders);
+        }
+        
+        [HttpGet("GetAllOrdersByfilter")]
+        public async Task<IActionResult> GetAllOrdersByfilterAsync([FromQuery] string? orderId,[FromQuery] PaginationQueries queries)
+        {
+            var filter = _map.Map<PaginationFilter>(queries);
+            var orders = await _orderService.GetAllOrdersByfilter(orderId,filter);
+
+            var response = new PagedResponse<Order>(orders);
+            response.PageSize = queries.PageSize;
+            response.PageNumber = queries.PageNumber;
+
+            return Ok(response);
         }
 
         [HttpGet("{id}")]

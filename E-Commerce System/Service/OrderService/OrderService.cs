@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using E_Commerce_System.Context;
 using E_Commerce_System.DTO.OrderDto;
+using E_Commerce_System.DTO.Response.Queries;
 using E_Commerce_System.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce_System.Service.OrderService
@@ -41,9 +43,24 @@ namespace E_Commerce_System.Service.OrderService
         public async Task<IEnumerable<Order>> GetAllOrdersAsync()
         {
             var orders = await _context.Orders
+                .Include(t =>t.Customer)
                 .ToListAsync();
 
             return orders;
+        }
+        public async Task<IEnumerable<Order>> GetAllOrdersByfilter( string? orderId = null, PaginationFilter filter = null)
+        {
+            var query = _context.Orders
+                .AsQueryable();
+            if (!string.IsNullOrEmpty(orderId))
+            {
+                query = query.Where(x => x.Id.ToString() == orderId);
+            }
+
+             return await query
+                .Skip((filter.PageNumber -1)*filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
         }
 
 

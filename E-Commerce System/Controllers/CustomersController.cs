@@ -75,13 +75,14 @@ namespace E_Commerce_System.Controllers
         }
 
         [HttpGet("GetAllUser")]
-        public async Task<IActionResult> GetAllUser([FromQuery] FilterQuery? query,[FromQuery] PaginationQueries queries)
+        public async Task<IActionResult> GetAllUser([FromQuery]string? userId,[FromQuery] PaginationQueries queries)
         {
             var paginationFilter = _map.Map<PaginationFilter>(queries);
 
-            var customer = await _service.GetAllCustomer(query.UserId,paginationFilter);
+            var customer = await _service.GetAllCustomer(userId,paginationFilter);
 
             var paginationResponse = new PagedResponse<Customer>(customer);
+
             return Ok(paginationResponse);
         }
 
