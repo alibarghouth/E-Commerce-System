@@ -35,6 +35,11 @@ namespace E_Commerce_System.Controllers
         [HttpGet("GetAllOrdersByfilter")]
         public async Task<IActionResult> GetAllOrdersByfilterAsync([FromQuery] string? orderId,[FromQuery] PaginationQueries queries)
         {
+            if (queries.PageNumber < 1)
+            {
+                return BadRequest("no content in page 0");
+            }
+
             var filter = _map.Map<PaginationFilter>(queries);
             var orders = await _orderService.GetAllOrdersByfilter(orderId,filter);
 

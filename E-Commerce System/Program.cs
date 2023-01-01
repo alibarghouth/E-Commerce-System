@@ -1,10 +1,14 @@
 using E_Commerce_System.Context;
+using E_Commerce_System.DTO.CustomerDto;
 using E_Commerce_System.Hash;
+using E_Commerce_System.Model;
 using E_Commerce_System.Service.CategoryService;
 using E_Commerce_System.Service.CustomerService;
 using E_Commerce_System.Service.OrderItemService;
 using E_Commerce_System.Service.OrderService;
 using E_Commerce_System.Service.ProductService;
+using E_Commerce_System.Validation;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -15,6 +19,16 @@ using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+builder.Services.AddControllers()
+    .AddFluentValidation(x =>
+    {
+        x.ImplicitlyValidateChildProperties = true;
+        x.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+    });
+
+//builder.Services.AddScoped<IValidator<RegisterUser>, CustomerValidation>();
 
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDBContext>(
@@ -33,12 +47,12 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
 });
 
-builder.Services.AddTransient<IHashPassword, PasswordHash>();
-builder.Services.AddTransient<ICustomerService, CustomerService>();
-builder.Services.AddTransient<ICategoryService, CategoryService>();
-builder.Services.AddTransient<IProductService, ProductService>();
-builder.Services.AddTransient<IOrderItemService, OrderItemService>();
-builder.Services.AddTransient<IOrderService,OrderService>();
+builder.Services.AddScoped<IHashPassword, PasswordHash>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderItemService, OrderItemService>();
+builder.Services.AddScoped<IOrderService,OrderService>();
 
 
 
@@ -69,8 +83,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 
-builder.Services
-    .AddFluentValidation(option => option.RegisterValidatorsFromAssemblyContaining<Program>());
+
 
 
 
@@ -94,7 +107,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(c => c.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
-
 
 
 app.UseAuthentication();

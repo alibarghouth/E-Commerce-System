@@ -3,13 +3,14 @@ using FluentValidation;
 
 namespace E_Commerce_System.Validation
 {
-    public class RigesterUserValidation : AbstractValidator<RegisterUser>
+    public class CustomerValidation : AbstractValidator<RegisterUser>
     {
-        public RigesterUserValidation()
+        public CustomerValidation()
         {
             RuleFor(x => x.Address).NotEmpty();
 
-            RuleFor(x => x.Email).NotEmpty();
+            RuleFor(x => x.Email).EmailAddress()
+                .NotEmpty();
 
             RuleFor(x => x.Picture).NotEmpty();
 
@@ -27,7 +28,8 @@ namespace E_Commerce_System.Validation
             RuleFor(x => x.LastName).NotEmpty()
                 .WithMessage("Please write name");
 
-            RuleFor(x => x.Password).NotEmpty();
+            RuleFor(x => x.Password).NotEmpty()
+                .Matches("A-Z");
 
             RuleFor(x => x.PostalCode).NotEmpty();
 
